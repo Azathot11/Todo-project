@@ -1,4 +1,4 @@
-import React,{ useEffect, useState } from "react";
+import React,{ useEffect, useState,useRef } from "react";
 import { FiEdit } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import axios from "axios";
@@ -12,6 +12,7 @@ const Home = () => {
   const [edit, setEdit] = useState(false);
   const [editValues, seteditValues] = useState({});
   const [loading, setIsLoading] = useState(false);
+
 
 
   const urlPrefix = "http://localhost:8081";
@@ -77,8 +78,9 @@ const Home = () => {
         dismiss();
         setIsLoading(false);
       } catch (err) {
+        dismiss()
         toast.error("An error occured", { autoClose: 3000 });
-        dismiss();
+       
         setIsLoading(false);
       }
     };
@@ -121,6 +123,7 @@ const Home = () => {
         );
   
         if (res.status === 200) {
+          dismiss()
           toast.success("Success", { autoClose: 3000 });
           const updatedArray = todos.map((obj) => {
             if (obj.id === res.data.id) {
@@ -137,16 +140,21 @@ const Home = () => {
           setTodos(updatedArray);
         }
       } catch (err) {
+        dismiss()
         toast.error("An error occured", { autoClose: 3000 });
         console.log(err);
       }
     };
 
+   
+
   return (
     <>
       <ToastContainer />
-      <div className="w-full h-screen min-h-full p-10 bg-gray-200 flex gap-x-10 ">
-        <div className="col-span-1 lg:col-span-6 w-full">
+     
+     {/* <button  onClick={modals.)}> clicked</button> */}
+      <div className="w-full h-full min-h-screen p-10 bg-gray-200 flex-col flex md:flex-row gap-x-10 ">
+        <div className="md:col-span-1 lg:col-span-6 w-full">
           <h4 className="text-3xl text-gray-700 mb-5">Please enter a todo</h4>
           <form
             onSubmit={formik.handleSubmit}
@@ -199,6 +207,7 @@ const Home = () => {
             <div className="mb-6 flex flex-wrap -mx-3w-full"></div>
             <div>
               <button
+              disabled={loading && true}
                 type="submit"
                 className="w-full text-ceenter px-4 py-3 bg-blue-500 rounded-md shadow-md text-white font-semibold"
               >
@@ -207,7 +216,7 @@ const Home = () => {
             </div>
           </form>
         </div>
-        <div className="col-span-1 lg:col-span-4 order-first lg:order-last w-full">
+        <div className="col-span-1 lg:col-span-4 lg:order-last w-full">
           <h4 className="text-3xl text-gray-700 mb-5">Todos</h4>
           <div className=" max-h-[800px] p-10 rounded-md shadow-md bg-white flex flex-col gap-y-5 overflow-y-auto">
             {todos.length === 0 && (
