@@ -50,7 +50,7 @@ const Home = () => {
     onSubmit: (values, onReset) => {
     const loginHandler = async () => {
       setIsLoading(true);
-    
+      httPromise()
       try {
         if (edit) {
           const res = await axios.put(
@@ -70,12 +70,13 @@ const Home = () => {
           setEdit(false);
           onReset.resetForm();
         } else {
+          dismiss();
+          toast.success("Success", { autoClose: 3000 });
           const res = await axios.post(`${urlPrefix}/todo/create`, values);
           setTodos([res.data, ...todos]);
           onReset.resetForm();
         }
-        toast.success("Success", { autoClose: 3000 });
-        dismiss();
+       
         setIsLoading(false);
       } catch (err) {
         dismiss()

@@ -2,24 +2,22 @@ const HttpError = require('../models/http-error');
 const Todo = require('../models/todo')
 const { v4: uuidv4 } = require('uuid');
 
+
 const todos = []
 
-exports.getTodos=async(req, res, next)=>{
+exports.getTodos = async (req, res, next) => {
+  try {
+    res.status(200).json(todos);
+  } catch (err) {
+    const error = new HttpError(
+      "Something went wrong, could not get todos.",
+      500
+    );
+    return next(error);
+  }
+};
 
-    try{
-        res.status(200).json(todos)
 
-    }catch(err){
-        const error = new HttpError('Something went wrong, could not get todos.', 500);
-        return next(error);
-    }
-}
-
-exports.getTodoById = async(req, res, next)=>{
-    const id = req.params.id
-    const foundTodo = todos.find((todo) => todo.id === id);
-    res.status(200).json({foundTodo})
-}
 
 
 exports.createTodo = async (req, res, next) => {
