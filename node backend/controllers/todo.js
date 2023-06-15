@@ -3,7 +3,12 @@ const Todo = require('../models/todo')
 const { v4: uuidv4 } = require('uuid');
 
 
-const todos = []
+const todos = [
+    {id:'1', title: 'Take out the trash', description: 'Don\'t forget to take out the trash!',completed:true },
+    {id:'2', title: 'Buy groceries', description: 'Pick up some milk, eggs, and bread' ,completed:true},
+    {id:'3', title: 'Do laundry', description: 'Wash, dry, and fold all the clothes' ,completed:false},
+    {id:'4', title: 'Clean the house', description: 'Vacuum, dust, and mop the floors' ,completed:false}
+]
 
 exports.getTodos = async (req, res, next) => {
   try {

@@ -1,4 +1,7 @@
-import React,{ useEffect, useState,useRef } from "react";
+import React,{ useEffect, useState,useRef } from "react"
+
+import Modal from '../components/Modal';
+
 import { FiEdit } from "react-icons/fi";
 import { AiOutlineDelete } from "react-icons/ai";
 import axios from "axios";
@@ -11,9 +14,16 @@ const Home = () => {
   const [todos, setTodos] = useState([]);
   const [edit, setEdit] = useState(false);
   const [editValues, seteditValues] = useState({});
+  const [deleteId,setDeleteId] = useState(null)
+  const [open, setOpen] = useState(false)
   const [loading, setIsLoading] = useState(false);
 
-
+  const todosss = [
+    {id:'1', title: 'Take out the trash', description: 'Don\'t forget to take out the trash!',completed:false },
+    {id:'2', title: 'Buy groceries', description: 'Pick up some milk, eggs, and bread' ,completed:false},
+    {id:'3', title: 'Do laundry', description: 'Wash, dry, and fold all the clothes' ,completed:false},
+    {id:'4', title: 'Clean the house', description: 'Vacuum, dust, and mop the floors' ,completed:false}
+  ]
 
   const urlPrefix = "http://localhost:8081";
   const toastId = React.useRef(null);
@@ -27,6 +37,7 @@ const Home = () => {
       try {
         const res = await axios.get(`${urlPrefix}/todo/getTodos`);
         if (res) {
+          console.log(res.data)
           setTodos(res.data);
         }
       } catch (err) {
@@ -94,14 +105,16 @@ const Home = () => {
     seteditValues(todo);
   };
 
-  const deleteHandler = async (id) => {
+  const deleteHandler = async () => {
     httPromise()
     try {
-      const res = await axios.delete(`${urlPrefix}/todo/delete/${id}`);
+      const res = await axios.delete(`${urlPrefix}/todo/delete/${deleteId}`);
       if (res.status === 200) {
         dismiss()
+        
         toast.success("Success", { autoClose: 3000 });
-        setTodos(todos.filter(todo => todo.id !== id));
+        setOpen(false)
+        setTodos(todos.filter(todo => todo.id !== deleteId));
       }
     } catch (err) {
       dismiss()
@@ -147,12 +160,15 @@ const Home = () => {
       }
     };
 
-   
+    const openDeleteModalHandler=(id)=>{
+      setOpen(true)
+      setDeleteId(id)
+     }
 
   return (
     <>
       <ToastContainer />
-     
+      <Modal open={open } setOpen={setOpen} deleteHandler={deleteHandler} />
      {/* <button  onClick={modals.)}> clicked</button> */}
       <div className="w-full h-full min-h-screen p-10 bg-gray-200 flex-col flex md:flex-row gap-x-10 ">
         <div className="md:col-span-1 lg:col-span-6 w-full">
@@ -260,7 +276,8 @@ const Home = () => {
                         <AiOutlineDelete
                           className="text-2xl  text-red-500"
                           onClick={() => {
-                            deleteHandler(todo.id);
+                            setOpen();
+                            openDeleteModalHandler(todo.id);
                           }}
                         />
                       </div>
